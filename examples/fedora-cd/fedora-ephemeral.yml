@@ -1,0 +1,45 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstance
+metadata:
+  labels:
+    special: vm-fedora-ephemeral
+  name: vm-fedora-ephemeral
+spec:
+  networks:
+  - name: default
+    pod: {}
+  domain:
+    devices:
+      interfaces:
+        - name: default
+          masquerade: {}
+      disks:
+      - disk:
+          bus: virtio
+        name: containerdisk
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+      rng: {}
+    machine:
+      type: ""
+    resources:
+      requests:
+        memory: 1024M 
+  terminationGracePeriodSeconds: 0
+  volumes:
+  - containerDisk:
+      image: quay.io/kubevirt/fedora-cloud-container-disk-demo
+    name: containerdisk
+  - cloudInitNoCloud:
+      userData: |
+        #cloud-config
+        hostname: fedora-0
+        password: fedora
+        chpasswd: { expire: False }
+        ssh_pwauth: True
+        disable_root: false
+        ssh_authorized_keys:
+          - ssh-rsa  AAAAB3Nz...0bLEgbgyYQ==
+    name: cloudinitdisk

@@ -1,0 +1,64 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+metadata:
+  labels:
+    special: vm-fedora-persist
+  name: vm-fedora-persist
+kind: VirtualMachine
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-fedora-persist
+    spec:
+      networks:
+      - name: default
+        pod: {}
+      domain:
+        devices:
+          interfaces:
+            - name: default
+              masquerade: {}
+          disks:
+          - disk:
+              bus: virtio
+            name: datavolumedisk1
+          - disk:
+              bus: virtio
+            name: cloudinitdisk
+          rng: {}
+        machine:
+          type: ""
+        resources:
+          requests:
+            memory: 2048M 
+      terminationGracePeriodSeconds: 0
+      volumes:
+        - dataVolume:
+            name: fedora-persist-dv
+          name: datavolumedisk1
+        - cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              hostname: fedora-0
+              password: fedora
+              chpasswd: { expire: False }
+              ssh_pwauth: True
+              disable_root: false
+              ssh_authorized_keys:
+                - ssh-rsa  AAAAB3Nz...0bLEgbgyYQ==
+          name: cloudinitdisk
+  dataVolumeTemplates:
+    - metadata:
+        name: fedora-persist-dv
+      spec:
+        pvc:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+        source:
+          registry: 
+            url: docker://quay.io/kubevirt/fedora-cloud-container-disk-demo

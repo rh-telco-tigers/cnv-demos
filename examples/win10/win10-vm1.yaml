@@ -1,0 +1,79 @@
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: win10vm1
+spec:
+  running: false
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        kubevirt.io/domain: win10vm1
+    spec:
+      domain:
+        clock:
+          timer:
+            hpet:
+              present: false
+            hyperv: {}
+            pit:
+              tickPolicy: delay
+            rtc:
+              tickPolicy: catchup
+          utc: {}
+        cpu:
+          cores: 1
+          sockets: 2
+          threads: 1
+        devices:
+          gpus:
+          - deviceName: nvidia.com/V100
+            name: gpu1
+          disks:
+          - cdrom:
+              bus: sata
+            name: windows-guest-tools
+          - bootOrder: 1
+            cdrom:
+              bus: sata
+            name: cdromiso
+          - disk:
+              bus: sata
+            name: disk-1
+          inputs:
+          - bus: usb
+            name: tablet
+            type: tablet
+          interfaces:
+          - masquerade: {}
+            model: virtio
+            name: nic-0
+        features:
+          acpi: {}
+          apic: {}
+          hyperv:
+            relaxed: {}
+            spinlocks:
+              spinlocks: 8191
+            vapic: {}
+        machine:
+          type: pc-q35-rhel8.2.0
+        resources:
+          requests:
+            memory: 8Gi
+      evictionStrategy: LiveMigrate
+      hostname: win10vm1
+      networks:
+      - name: nic-0
+        pod: {}
+      terminationGracePeriodSeconds: 3600
+      volumes:
+        - name: cdrom
+          persistentVolumeClaim:
+            claimName: iso-win10
+        - name: disk-1
+          persistentVolumeClaim:
+            claimName: winhd1
+        - containerDisk:
+            image: kubevirt/virtio-container-disk
+          name: windows-guest-tools

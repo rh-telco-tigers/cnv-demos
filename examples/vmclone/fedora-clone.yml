@@ -1,0 +1,65 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+metadata:
+  labels:
+    special: vm-fedora-clone
+  name: vm-fedora-clone
+kind: VirtualMachine
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-fedora-clone
+    spec:
+      networks:
+      - name: default
+        pod: {}
+      domain:
+        devices:
+          interfaces:
+            - name: default
+              masquerade: {}
+          disks:
+          - disk:
+              bus: virtio
+            name: datavolumedisk1
+          - disk:
+              bus: virtio
+            name: cloudinitdisk
+          rng: {}
+        machine:
+          type: ""
+        resources:
+          requests:
+            memory: 2048M 
+      terminationGracePeriodSeconds: 0
+      volumes:
+        - dataVolume:
+            name: fedora-clone-dv
+          name: datavolumedisk1
+        - cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              hostname: fedora-0
+              password: fedora
+              chpasswd: { expire: False }
+              ssh_pwauth: True
+              disable_root: false
+              ssh_authorized_keys:
+                - ssh-rsa  AAAAB3Nz...0bLEgbgyYQ==
+          name: cloudinitdisk
+  dataVolumeTemplates:
+    - metadata:
+        name: fedora-clone-dv
+      spec:
+        pvc:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+        source:
+          pvc:
+            namespace: "demovms"
+            name: "fedora-persist-dv"
