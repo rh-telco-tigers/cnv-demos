@@ -2,20 +2,26 @@
 
 ## Table of Contents
 
-<!-- TOC -->
-* [Introduction](#introduction)
-* [Prerequisites](#architecture)
-* [Prerequisites](#prerequisites)
-* [Your First VM](#your-first-vm)
-  * [Authenticate gcloud](#authenticate-gcloud)
-  * [Setup this project](#setup-this-project)
-  * [Cluster Deployment](#cluster-deployment)
-  * [Provisioning the Kubernetes Engine Cluster](#provisioning-the-kubernetes-engine-cluster)
-  * [Accessing the Private Cluster](#accessing-the-private-cluster)
-* [Guided Demos](#guided-demos)
-* [Teardown](#teardown)
-* [Troubleshooting](#troubleshooting)
-<!-- TOC -->
+- [Kicking the tires on OpenShift Virtualization](#kicking-the-tires-on-openshift-virtualization)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Prerequisites](#prerequisites)
+  - [Your first VM](#your-first-vm)
+    - [Using the OpenShift UI](#using-the-openshift-ui)
+  - [Exposing a service from a VM](#exposing-a-service-from-a-vm)
+    - [VMIRS and Liveness Probes](#vmirs-and-liveness-probes)
+    - [Cleanup](#cleanup)
+  - [Making a persistent Fedora VM](#making-a-persistent-fedora-vm)
+    - [Migrating a vm from one host to another](#migrating-a-vm-from-one-host-to-another)
+    - [Cleanup](#cleanup-1)
+  - [Cloning a VM](#cloning-a-vm)
+    - [Cleanup](#cleanup-2)
+  - [Deploying a Windows VM from ISO](#deploying-a-windows-vm-from-iso)
+    - [Create new VM](#create-new-vm)
+    - [Accessing a Windows VM directly via RDP](#accessing-a-windows-vm-directly-via-rdp)
+  - [Importing a VM from vSphere](#importing-a-vm-from-vsphere)
+  - [Importing a VMDK](#importing-a-vmdk)
+    - [Cleanup](#cleanup-3)
 
 ## Introduction
 
