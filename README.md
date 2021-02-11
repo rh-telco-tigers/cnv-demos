@@ -31,7 +31,7 @@ So you are trying out OpenShift Virtualization, but don't know where to start. H
 
 ## Prerequisites
 
-This README assumes that you already have OpenShift Virtualization installed, and you have storage avaialble to you. Please see [Installing OpenShift Virtualization](https://docs.openshift.com/container-platform/4.6/virt/install/preparing-cluster-for-virt.html) for instructions on how to prepare your cluster and install OpenShift Virtualization.
+This README assumes that you already have OpenShift Virtualization installed, and you have storage available to you. Please see [Installing OpenShift Virtualization](https://docs.openshift.com/container-platform/4.6/virt/install/preparing-cluster-for-virt.html) for instructions on how to prepare your cluster and install OpenShift Virtualization.
 
 You will need the following tools installed on your machine to interact with the OpenShift cluster as well as the OpenShift Virtualization operator.
 * oc - 
@@ -92,7 +92,7 @@ The OpenShift UI supports visualization of your running VMs, including metrics, 
 8. Log into the console with "fedora:fedora"
 9. Have fun with your ephemeral VM
 
-Lets delete this VMI and move onto a more permanent virtual machine. (NOTE: if you have the OpenShift console still open, you will see the VM dissapear from the console when you run this command)
+Lets delete this VMI and move onto a more permanent virtual machine. (NOTE: if you have the OpenShift console still open, you will see the VM disappear from the console when you run this command)
 
 ```
 $ oc delete vmi/vm-fedora-ephemeral
@@ -142,7 +142,7 @@ Now list out the running vm instances:
 
 Note that there are THREE virtual machines running. This is similar to creating a replicaSet in kubernetes, we specified that we want 3 instances of this VM running.
 
-Now if you curl the endpoint we created earlier a few times you will see that the message changes. This is becuase we are now load balancing our requests across all three VMs.
+Now if you curl the endpoint we created earlier a few times you will see that the message changes. This is because we are now load balancing our requests across all three VMs.
 
 But we can do even better than this, open a new terminal window and run the following commands making sure to update the URL for your specific instance:
 
@@ -203,6 +203,8 @@ $ oc create -f examples/fedora-cd/fedora-persistent.yml
 
 We can now check on the status of the VM using the oc and virtctl commands
 
+NOTE: If you get an error in creating the datavolume, you may need to explicitly set your storage class. Edit the examples/fedora-cd/fedora-persist.yml file and update the "StorageClass" entry (line 57) to use a storage class in your cluster that supports RWX.
+
 ```
 oc get vm
 oc describe vm/vm-fedora-persist
@@ -225,7 +227,7 @@ exit
 
 ### Migrating a vm from one host to another
 
-Running VMs can be migrated from one host to another from both the UI as well as from the command line. Lets migrate our running vm from one hsot to another.
+Running VMs can be migrated from one host to another from both the UI as well as from the command line. Lets migrate our running vm from one host to another.
 
 ```
 # lets get the Node that the vmi is running on
@@ -248,7 +250,7 @@ You can also run a vm migration from within the OpenShift console
 
 ### Cleanup
 
-At this point we will now shut down the VM 
+At this point we will now shut down the VM.
 
 ```
 $ virtctl stop vm-fedora-persist
@@ -292,7 +294,7 @@ $ ls
 helloworld
 ```
 
-Cloning a VM can be very powerful. Later in this lab we will create a Microsoft Windows VM. As you will see it takes some time to prep your first Windows VM going through the Windows install process. Once you have a base image, you can then use cloning to make mulitple copies of that VM to speed up the process.
+Cloning a VM can be very powerful. Later in this lab we will create a Microsoft Windows VM. As you will see it takes some time to prep your first Windows VM going through the Windows install process. Once you have a base image, you can then use cloning to make multiple copies of that VM to speed up the process.
 
 ### Cleanup
 
@@ -310,7 +312,7 @@ $ oc delete vm/vm-fedora-persist
 
 ### Create new VM
 
-We will start by uploading a ISO boot cd to our cluster. We will use the virtctl command to upload the ISO image. You will need to supply your own copy of the Windows 10 install ISO. The steps below can also be used to install similar Microsoft based operating systems such as Windows Server 2012r2, Windows Server 2016 and Windows Server 2019. If you do not have a Windows 10 ISO, you can go to the Microsoft site [Downlaod Windows 10 Disc Image](https://www.microsoft.com/en-us/software-download/windows10ISO) and get a copy.
+We will start by uploading a ISO boot cd to our cluster. We will use the virtctl command to upload the ISO image. You will need to supply your own copy of the Windows 10 install ISO. The steps below can also be used to install similar Microsoft based operating systems such as Windows Server 2012r2, Windows Server 2016 and Windows Server 2019. If you do not have a Windows 10 ISO, you can go to the Microsoft site [Download Windows 10 Disc Image](https://www.microsoft.com/en-us/software-download/windows10ISO) and get a copy.
 
 Once you have a copy of the install ISO, we will upload this CD to our OpenShift cluster. Use the command below to upload the ISO image. Be sure to update the URL to point to your OpenShift cluster.
 
@@ -336,12 +338,14 @@ $ virtctl expose virtualmachine win10vm1 --name windows-app-server-rdp --port 33
 ## Importing a VM from vSphere
 
 It is possible to import an existing virtual machine from a vSphere cluster. There are a few caveats to be aware of before attempting this import.
-1. the vm you wish to import must be powered off. Importing running vms is not supported at this time
+
+1. The vm you wish to import must be powered off. Importing running vms is not supported at this time
 2. You should ensure that the virtual machine you plan to import supports virtio or scsi or sata drivers before importing the vm
 
 The OpenShift vSphere import process requires the use of the VMware Virtual Disk Development Kit (VDDK) to properly import the images. Instructions for how to get this file and make it available to your cluster are located [Importing a single VMware virtual machine or template](https://docs.openshift.com/container-platform/4.6/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.htmlhttps://docs.openshift.com/container-platform/4.6/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html) You must follow the directions on that page before proceeding with the remaining steps in this lab.
 
 To start the import process log into the OpenShift Console UI
+
 1. Log into the OpenShift Console (https://console-openshift-console.apps.\<your cluster dns name\>/)
 2. Select "Workloads" from the left hand side
 3. Select "Virtualization"
@@ -362,14 +366,13 @@ To start the import process log into the OpenShift Console UI
 15. Power from the Actions menu select "Start Virtual Machine"
 16. Select the console and watch your imported VM start.
 
-
 ## Importing a VMDK
 
-If you have an existing vmdk you can also import this into OpenShift Virtualization. The same caveots with importing directly from vSphere or another hypervisor still exist. Your OS needs to have driver support for the storage controller or your machine will not be able to boot. Assuming your OS has the proper drivers installed you can import the vm and start using it right away.
+If you have an existing vmdk you can also import this into OpenShift Virtualization. The same caveats with importing directly from vSphere or another hypervisor still exist. Your OS needs to have driver support for the storage controller or your machine will not be able to boot. Assuming your OS has the proper drivers installed you can import the vm and start using it right away.
 
 The instructions below assume you have a vmdk called "my-vm.vmdk". Be sure to update the commands below based on the name of YOUR vmdk file.
 
-You will need `qemu-img` to convert from vmdk to qcow2 image format. 
+You will need `qemu-img` to convert from vmdk to qcow2 image format.
 
 ```
 $ qemu-img convert -f vmdk -O qcow2 Red_Hat_Linux_Export-disk1.vmdk my_vmimage.qcow2
@@ -419,7 +422,7 @@ If there are issues with your imported VM starting, it is most likely due to iss
 
 ### Cleanup
 
-If you no longer need your imported VM, we want to ensure that we fully clean things up. Remember that we imported a disk as a datavolume as a seperate step, so we will need to delete both the imported VM as well as the datavolume itself.
+If you no longer need your imported VM, we want to ensure that we fully clean things up. Remember that we imported a disk as a datavolume as a separate step, so we will need to delete both the imported VM as well as the datavolume itself.
 
 ```
 $ oc get vm

@@ -54,7 +54,7 @@ spec:
         name: fedora-clone-dv
       spec:
         pvc:
-          storageClassName: 
+          # storageClassName: storage-class-name-goes-here
           accessModes:
           - ReadWriteOnce
           resources:

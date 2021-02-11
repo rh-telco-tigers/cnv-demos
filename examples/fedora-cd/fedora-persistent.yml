@@ -54,7 +54,7 @@ spec:
         name: fedora-persist-dv
       spec:
         pvc:
-          storageClassName: 
+          # storageClassName: storage-class-name-goes-here
           accessModes:
           - ReadWriteMany
           resources:
