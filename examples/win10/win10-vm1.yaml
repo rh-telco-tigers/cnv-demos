@@ -26,9 +26,6 @@ spec:
           sockets: 2
           threads: 1
         devices:
-          gpus:
-          - deviceName: nvidia.com/V100
-            name: gpu1
           disks:
           - cdrom:
               bus: sata

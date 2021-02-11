@@ -41,7 +41,7 @@ spec:
         - cloudInitNoCloud:
             userData: |
               #cloud-config
-              hostname: fedora-0
+              hostname: fedora-clone
               password: fedora
               chpasswd: { expire: False }
               ssh_pwauth: True
