@@ -359,6 +359,8 @@ To start the import process log into the OpenShift Console UI
 12. Set any advanced settings and click next
 13. Review your settings and click import
 14. Select the new VM and watch the import process, and wait for it to complete.
+15. Power from the Actions menu select "Start Virtual Machine"
+16. Select the console and watch your imported VM start.
 
 
 ## Importing a VMDK
