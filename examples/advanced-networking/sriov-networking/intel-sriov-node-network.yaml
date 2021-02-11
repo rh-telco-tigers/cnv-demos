@@ -1,0 +1,16 @@
+apiVersion: sriovnetwork.openshift.io/v1
+kind: SriovNetworkNodePolicy
+metadata:
+  name: intel-sriov
+  namespace: openshift-sriov-network-operator 
+spec:
+  resourceName: intel 
+  nodeSelector:
+    feature.node.kubernetes.io/network-sriov.capable: "true" 
+  priority: 10
+  numVfs: 16 
+  nicSelector: 
+    vendor: "8086" 
+    deviceID: "10fb"
+  deviceType: vfio-pci 
+  isRdma: false 
