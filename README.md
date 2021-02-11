@@ -2,6 +2,7 @@
 
 ## Table of Contents
 
+<!-- TOC -->
 - [Kicking the tires on OpenShift Virtualization](#kicking-the-tires-on-openshift-virtualization)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
@@ -22,6 +23,7 @@
   - [Importing a VM from vSphere](#importing-a-vm-from-vsphere)
   - [Importing a VMDK](#importing-a-vmdk)
     - [Cleanup](#cleanup-3)
+<!-- TOC -->
 
 ## Introduction
 
