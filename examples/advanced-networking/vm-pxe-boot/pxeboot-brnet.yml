@@ -1,0 +1,53 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstance
+metadata:
+  labels:
+    special: vm-pxeboot
+  name: vm-pxeboot
+spec:
+  networks:
+  - name: default
+    pod: {}
+  - name: pxe-net 
+    multus:
+      networkName: br1-10
+  domain:
+    devices:
+      interfaces:
+        - name: default
+          masquerade: {}
+        - bridge: {}
+          name: pxe-net
+          # macAddress: de:00:00:00:00:de
+          bootOrder: 1
+      disks:
+      - disk:
+          bus: virtio
+        name: containerdisk
+        bootOrder: 2
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+      rng: {}
+    machine:
+      type: ""
+    resources:
+      requests:
+        memory: 2048M 
+  terminationGracePeriodSeconds: 0
+  volumes:
+  - containerDisk:
+      image: quay.io/kubevirt/fedora-cloud-container-disk-demo
+    name: containerdisk
+  - cloudInitNoCloud:
+      userData: |
+        #cloud-config
+        hostname: fedora-brnet
+        password: fedora
+        chpasswd: { expire: False }
+        ssh_pwauth: True
+        disable_root: false
+        ssh_authorized_keys:
+          - ssh-rsa  AAAAB3Nz...0bLEgbgyYQ==
+    name: cloudinitdisk

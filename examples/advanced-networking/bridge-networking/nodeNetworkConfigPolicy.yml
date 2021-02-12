@@ -7,7 +7,7 @@ spec:
     xphyr.net/bridgenabled: ""
   desiredState:
     interfaces:
-      - name: br1 
+      - name: br1-trunk 
         type: linux-bridge 
         state: up 
         bridge: 

@@ -23,6 +23,7 @@
   - [Importing a VM from vSphere](#importing-a-vm-from-vsphere)
   - [Importing a VMDK](#importing-a-vmdk)
     - [Cleanup](#cleanup-3)
+  - [Advanced networking examples](#advanced-networking-examples)
 <!-- TOC -->
 
 ## Introduction
@@ -435,3 +436,8 @@ NAME               PHASE       PROGRESS   RESTARTS   AGE
 imported-vm-disk   Succeeded   N/A                   46m
 $ oc delete datavolume/imported-vm-disk
 ```
+
+## Advanced networking examples
+
+OpenShift Virtualization is not limited to just using the internal SDN network for connectivity. It is possible to add additional network cards to your virtual machines, and even connect to existing networks in your environment. These are more advanced topics, and you should be sure you have a base understanding of how OpenShift Virtualization works before proceeding with these.
+The Advanced networking README.me can be found in the examples/advanced-networking directory of this repo.

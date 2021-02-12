@@ -11,7 +11,7 @@ spec:
     "plugins": [
       {
         "type": "cnv-bridge",
-        "bridge": "br1",
+        "bridge": "br1-trunk",
         "vlan": 15
       },
       {
