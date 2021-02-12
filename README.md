@@ -440,4 +440,4 @@ $ oc delete datavolume/imported-vm-disk
 ## Advanced networking examples
 
 OpenShift Virtualization is not limited to just using the internal SDN network for connectivity. It is possible to add additional network cards to your virtual machines, and even connect to existing networks in your environment. These are more advanced topics, and you should be sure you have a base understanding of how OpenShift Virtualization works before proceeding with these.
-The Advanced networking README.me can be found in the examples/advanced-networking directory of this repo.
+The Advanced networking README.me can be found in the [examples/advanced-networking/README.md](https://github.com/rh-telco-tigers/cnv-demos/blob/master/examples/advanced-networking/README.md) directory of this repo.
