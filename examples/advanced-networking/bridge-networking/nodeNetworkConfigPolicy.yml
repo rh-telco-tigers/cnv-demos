@@ -4,7 +4,7 @@ metadata:
   name: br1-eth1-policy 
 spec:
   nodeSelector:
-    xphyr.net/bridgenabled: ""
+    networking.config/bridgenabled: "true"
   desiredState:
     interfaces:
       - name: br1-trunk 
