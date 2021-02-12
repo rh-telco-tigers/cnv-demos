@@ -9,6 +9,10 @@
   - [Creating a nodeNetworkConfigPolicy](#creating-a-nodenetworkconfigpolicy)
   - [Connecting a VM to your bridge network](#connecting-a-vm-to-your-bridge-network)
   - [Booting from the Network](#booting-from-the-network)
+  - [SRIOV Support](#sriov-support)
+    - [Configuring your cluster for SRIOV](#configuring-your-cluster-for-sriov)
+      - [Enabling Unsupported Cards](#enabling-unsupported-cards)
+    - [Using SRIOV device in a virtual machine](#using-sriov-device-in-a-virtual-machine)
 <!-- TOC -->
 
 ## Introduction
@@ -65,7 +69,7 @@ This demo works best if you have DHCP on your target vlan so you can see that th
 To start a vm with a secondary network interface, review the configuration in examples/advanced-networking/fedora-brnet.yml and update if you made any changes when creating the target vlan and then apply the Yaml to your cluster. We will then connect to the console and log in as "fedora:fedora" and run a few commands to see that you have a second interface and it is available on your target vlan.
 
 ```
-$ oc create -f examples/advanced-networking/fedora-brnet.yml
+$ oc create -f examples/advanced-networking/fedora-brnet/fedora-brnet.yml
 $ oc get vmi
 # Wait until vmi shows running
 $ virtctl console vm-fedora-brnet
@@ -88,4 +92,90 @@ We can now create the VM by applying the YAML:
 oc create -f examples/advanced-networking/vm-pxe-boot/pxeboot-brnet.yml
 # connect to the console of the VM and see that it is now booting over the network
 virtctl console vm-pxeboot
+```
+
+## SRIOV Support
+
+OpenShift has support for [SR-IOV - Single Root - Input Output Virtualization](https://en.wikipedia.org/wiki/Single-root_input/output_virtualization) network cards. Support for these cards can be managed using an Operator. The following steps will enable SR-IOV and in subsequent steps we will connect a virtual machine to these cards.
+
+### Configuring your cluster for SRIOV
+
+Start by creating a new namespace (not project) called "openshift-sriov-network-operator”
+This can be done from the UI by going to “Administration->Namespaces” and clicking create OR by running the following command: 
+
+
+```
+$ cat << EOF| oc create -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-sriov-network-operator
+EOF
+```
+
+Once you have created the namespace, log into the OpenShift console and install the “SR-IOV Network Operator”
+1. Log into the console
+2. Select Operators->Operator Hub
+3. Search for "SR-IOV Network Operator" and select it
+4. Click install
+5. Ensure that you install it to the "openshift-sriov-network-operator" namespace you created earlier
+6. Wait for the operator install to complete
+7. 
+
+We can now check on the status of the operator to see if it was able to identify SRIOV devices. We will be using the command line for the next set of steps:
+
+```
+$ oc login <cluster>
+$ oc project openshift-sriov-network-operator
+$ oc get SriovNetworkNodeState
+# ensure that there is a SriovNetworkNodeState for each machine in your cluster)
+# for each node that you think will have an SRIOV device run:
+$ oc describe SriovNetworkNodeState/<nodeName>
+```
+
+You will see a list of all network devices detected. You are looking for a device to be detected that lists “Totalvfs:   <some number>” where some number is the total number of SRIOV devices that the network card supports. If you do not see any cards identified but you are sure your card does have SRIOV support you can enable unsupported card discovery by following the steps in the section below called [Enabling Unsupported Cards](#enabling-unsupported-cards)
+
+Review the file examples/advanced-networking/intel-sriov-node-network.yml file and update the following fields to match the cards you have discovered.
+
+* metadata.name
+* spec.numVfs
+* spec.nicSelector.vendor
+* spec.nicSelector.deviceID
+
+Once you update the yaml, apply this to your cluster. Note that the nodes that have SRIOV cards *will reboot*. When the reboot is complete, re-run the `oc describe SriovNetworkNodeState/sriov0` command and you should now see a list of SRIOV devices.
+
+#### Enabling Unsupported Cards
+
+If your network card is not listed as a supported card you will need to run the following:
+
+```
+oc patch sriovoperatorconfig default --type=merge \
+-n openshift-sriov-network-operator \
+--patch '{ "spec": { "enableOperatorWebhook": false } }'
+```
+
+*NOTE THIS MEANS YOUR NETWORK CARD IS NOT SUPPORTED, DON'T CALL FOR HELP.*
+
+### Using SRIOV device in a virtual machine
+
+Now that we have properly configured SR-IOV for your cluster, we will tell the SR-IOV Operator to create a NetworkAttachmentDefinition in the demovms project for us to consume. Review the file examples/advanced-networking/sriov-networking/vlan15sriov.yml and ensure that the proper target vlan is defined and then apply it to your cluster
+
+```
+$ oc create -f examples/advanced-networking/sriov-networking/vlan15sriov.yml
+$ oc get network-attachment-definition
+# ensure that your new network is created
+```
+
+We can now use the template located in examples/advanced-networking/fedora-sriov/fedora-sriov.yml to create a vm that will leverage a SR-IOV network card virtual function to directly attach to your layer-2 network.
+
+```
+$ oc create -f examples/advanced-networking/fedora-sriov/fedora-sriov.yml
+$ oc get vmi
+# Wait until vmi shows running
+$ virtctl console vm-fedora-brnet
+# login using fedora:fedora
+$ ip a
+# note that there are two network interfaces
+# and that one interface has an IP on the OpenShift SDN
+# the second interface has an IP address assigned from the DHCP server on your target vlan
 ```

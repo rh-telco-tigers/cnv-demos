@@ -1,0 +1,9 @@
+apiVersion: sriovnetwork.openshift.io/v1
+kind: SriovNetwork
+metadata:
+  name: vlan15-sriov-demovms
+  namespace: openshift-sriov-network-operator
+spec:
+  resourceName: intel
+  networkNamespace: demovms
+  vlan: 15

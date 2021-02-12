@@ -1,0 +1,50 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstance
+metadata:
+  labels:
+    special: vm-fedora-sriov
+  name: vm-fedora-sriov
+spec:
+  networks:
+  - name: default
+    pod: {}
+  - name: sriov-net 
+    multus:
+      networkName: vlan15-sriov-demovms 
+  domain:
+    devices:
+      interfaces:
+        - name: default
+          masquerade: {}
+        - bridge: {}
+          name: sriov-net
+      disks:
+      - disk:
+          bus: virtio
+        name: containerdisk
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+      rng: {}
+    machine:
+      type: ""
+    resources:
+      requests:
+        memory: 2048M 
+  terminationGracePeriodSeconds: 0
+  volumes:
+  - containerDisk:
+      image: quay.io/kubevirt/fedora-cloud-container-disk-demo
+    name: containerdisk
+  - cloudInitNoCloud:
+      userData: |
+        #cloud-config
+        hostname: fedora-sriov
+        password: fedora
+        chpasswd: { expire: False }
+        ssh_pwauth: True
+        disable_root: false
+        ssh_authorized_keys:
+          - ssh-rsa  AAAAB3Nz...0bLEgbgyYQ==
+    name: cloudinitdisk
