@@ -40,17 +40,18 @@ worker1   Ready    worker   25d   v1.19.0+1833054
 worker2   Ready    worker   25d   v1.19.0+1833054
 $ oc label nodes <nodeName> networking.config/bridgenabled=true
 ```
-Instead of labeling the nodes one after the other, the network configuration can be applied to all the worker nodes by specifying their node role -
+
+An alternative method of applying the network configuration on only the worker nodes is by specifying their role as nodeSelector in the NodeNetworkConfigurationPolicy manifest - 
 
 ```
   nodeSelector:
     node-role.kubernetes.io/worker: ""
 ```
 
-Now that the nodes are labeled properly, we will apply our NodeNetworkConfigurationPolicy. Edit the examples/advanced-networking/nodeNetworkConfigPolicy.yml and be sure to update the device name of your secondary network card, if it is not ens224. Save the file and apply with
+Now the NodeNetworkConfigurationPolicy manifest can be applied on the cluster. Edit the examples/advanced-networking/bridgeNetworkConfigPolicy.yml and be sure to update the device name of your secondary network card, if it is not ens224. Save the file and apply with
 
 ```
-$ oc create -f examples/advanced-networking/bridge-networking/nodeNetworkConfigPolicy.yml
+$ oc create -f examples/advanced-networking/bridge-networking/bridgeNetworkConfigPolicy.yml
 $ oc get NodeNetworkConfigurationPolicy
 NAME              STATUS
 br1-eth1-policy   SuccessfullyConfigured
@@ -67,6 +68,10 @@ br1-10   148m
 ```
 
 You OpenShift cluster is now configured with a bridge connection to your layer-2 network and a connection can be made within the demovms project. Let's see how we can use this.
+
+Note: In addition to bridge interface, you can configure the cluster nodes' network with other interfaces like Ethernet, Bond, VLAN, etc. using the NodeNetworkConfigurationPolicy manifest. 
+
+An example of creating a bond interface connecting two node network interfaces, which in turn is attached to a bridge interface is given in examples/advanced-networking/bondNetworkConfigPolicy.yml. You would need two or more additional network interface cards on the nodes for creating such a configuration. Make sure to update the device names of the network interface cards in the yaml. 
 
 ## Connecting a VM to your bridge network
 

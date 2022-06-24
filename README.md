@@ -32,11 +32,11 @@ So you are trying out OpenShift Virtualization, but don't know where to start. H
 
 ## Prerequisites
 
-This README assumes that you already have OpenShift Virtualization installed, and you have storage available to you. Please see [Installing OpenShift Virtualization](https://docs.openshift.com/container-platform/4.6/virt/install/preparing-cluster-for-virt.html) for instructions on how to prepare your cluster and install OpenShift Virtualization.
+This README assumes that you already have OpenShift Virtualization installed, and you have storage available to you. Please see [Installing OpenShift Virtualization](https://docs.openshift.com/container-platform/4.10/virt/install/preparing-cluster-for-virt.html) for instructions on how to prepare your cluster and install OpenShift Virtualization.
 
 You will need the following tools installed on your machine to interact with the OpenShift cluster as well as the OpenShift Virtualization operator.
 * oc - 
-* virtctl - This tool can be downloaded from the [Red Hat Customer Support Portal](https://access.redhat.com/downloads/content/473/ver=2.5/rhel---8/2.5.3/x86_64/product-software)
+* virtctl - This tool can be downloaded from the [Red Hat Customer Support Portal](https://access.redhat.com/downloads/content/473/ver=2.5/rhel---8/2.5.3/x86_64/packages)
 
 You will need to have a cloned copy of this repo to use the example files. The instructions below will assume you have a local copy of the files that you can edit before applying the yaml.
 
@@ -343,7 +343,7 @@ It is possible to import an existing virtual machine from a vSphere cluster. The
 1. The vm you wish to import must be powered off. Importing running vms is not supported at this time
 2. You should ensure that the virtual machine you plan to import supports virtio or scsi or sata drivers before importing the vm
 
-The OpenShift vSphere import process requires the use of the VMware Virtual Disk Development Kit (VDDK) to properly import the images. Instructions for how to get this file and make it available to your cluster are located [Importing a single VMware virtual machine or template](https://docs.openshift.com/container-platform/4.6/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.htmlhttps://docs.openshift.com/container-platform/4.6/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html) You must follow the directions on that page before proceeding with the remaining steps in this lab.
+The OpenShift vSphere import process requires the use of the VMware Virtual Disk Development Kit (VDDK) to properly import the images. Instructions for how to get this file and make it available to your cluster are located [Importing a single VMware virtual machine or template](https://docs.openshift.com/container-platform/4.7/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html) You must follow the directions on that page before proceeding with the remaining steps in this lab.
 
 To start the import process log into the OpenShift Console UI
 
