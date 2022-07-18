@@ -338,7 +338,7 @@ $ virtctl expose virtualmachine win10vm1 --name windows-app-server-rdp --port 33
 
 ## Importing a VM from vSphere
 
-It is possible to import an existing virtual machine from a vSphere cluster to OpenShift Virtualization using [Migration Toolkit for Virtualization](https://access.redhat.com/documentation/en-us/migration_toolkit_for_virtualization/2.3). The detailed steps for migration is outlined [here] (https://github.com/latouchek/mtv-vsphere).
+It is possible to import an existing virtual machine from a vSphere cluster to OpenShift Virtualization using [Migration Toolkit for Virtualization](https://access.redhat.com/documentation/en-us/migration_toolkit_for_virtualization/2.3). The detailed steps for migration is outlined [here](https://github.com/latouchek/mtv-vsphere).
 
 ## Importing a VMDK
 
