@@ -41,16 +41,23 @@ worker2   Ready    worker   25d   v1.19.0+1833054
 $ oc label nodes <nodeName> networking.config/bridgenabled=true
 ```
 
-Now that the nodes are labeled properly, we will apply our NodeNetworkConfigurationPolicy. Edit the examples/advanced-networking/nodeNetworkConfigPolicy.yml and be sure to update the device name of your secondary network card, if it is not ens224. Save the file and apply with
+An alternative method of applying the network configuration on only the worker nodes is by specifying their role as nodeSelector in the NodeNetworkConfigurationPolicy manifest - 
 
 ```
-$ oc create -f examples/advanced-networking/bridge-networking/nodeNetworkConfigPolicy.yml
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+```
+
+Now the NodeNetworkConfigurationPolicy manifest can be applied on the cluster. Edit the examples/advanced-networking/bridgeNetworkConfigPolicy.yml and be sure to update the device name of your secondary network card, if it is not ens224. Save the file and apply with
+
+```
+$ oc create -f examples/advanced-networking/bridge-networking/bridgeNetworkConfigPolicy.yml
 $ oc get NodeNetworkConfigurationPolicy
 NAME              STATUS
 br1-eth1-policy   SuccessfullyConfigured
 ```
 
-We will now create a "NetworkAttachmentDefinition" which is created on a project/namespace level. You must have a NetworkAttachmentDefinition defined in your target namespace before you can use it. We will apply the vlan15Bridge.yaml file to the same project we used for the OpenShift Virtualization lab called "demovms". If you want to use a different VLAN be sure to update the file before applying it with your target vlan number.
+We will now create a "NetworkAttachmentDefinition" which is created on a project/namespace level. You must have a NetworkAttachmentDefinition defined in your target namespace before you can use it. We will apply the vlan15Bridge.yml file to the same project we used for the OpenShift Virtualization lab called "demovms". If you want to use a different VLAN be sure to update the file before applying it with your target vlan number.
 
 ```
 $ oc project demovms
@@ -62,9 +69,32 @@ br1-10   148m
 
 You OpenShift cluster is now configured with a bridge connection to your layer-2 network and a connection can be made within the demovms project. Let's see how we can use this.
 
+Note: In addition to bridge interface, you can configure the cluster nodes' network with other interfaces like Ethernet, Bond, VLAN, etc. using the NodeNetworkConfigurationPolicy manifest. 
+
+An example of creating a bond interface connecting two node network interfaces, which in turn is attached to a bridge interface is given in examples/advanced-networking/bondNetworkConfigPolicy.yml. You would need two or more additional network interface cards on the nodes for creating such a configuration. Make sure to update the device names of the network interface cards in the yaml. 
+
 ## Connecting a VM to your bridge network
 
-This demo works best if you have DHCP on your target vlan so you can see that the secondary connection comes on line and properly configures to your layer-2 network, but you can manually configure a network on the secondary interface to test if you do not have DHCP.
+This demo works best if you have DHCP on your target vlan so you can see that the secondary connection comes on line and properly configures to your layer-2 network, but you can manually configure a network on the secondary interface to test if you do not have DHCP. You can also assign a static IP to the secondary interface either via 
+(1) the NetworkAttachmentDefinition, as seen in vlan15BridgeStaticIP.yml, or
+(2) the cloud-init, as shown below -
+
+```
+kind: VirtualMachine
+spec:
+...
+  volumes:
+  - cloudInitNoCloud:
+      networkData: |
+        version: 2
+        ethernets:
+          eth1: 
+            addresses:
+            - 10.10.10.14/24 
+```
+
+Note that when assigning the IP via a NetworkAttachmentDefinition, only one vm can be attached using that definition.
+Also ensure that while assigning a static IP, the IP address falls in the machine CIDR range defined for the cluster.
 
 To start a vm with a secondary network interface, review the configuration in examples/advanced-networking/fedora-brnet.yml and update if you made any changes when creating the target vlan and then apply the Yaml to your cluster. We will then connect to the console and log in as "fedora:fedora" and run a few commands to see that you have a second interface and it is available on your target vlan.
 
@@ -79,6 +109,8 @@ $ ip a
 # and that one interface has an IP on the OpenShift SDN
 # the second interface has an IP address assigned from the DHCP server on your target vlan
 ```
+
+You can now connect to the vm using the second interface's IP as well. Additional vms can be attached to the same bridge network to facilitate secure communication amongst them.
 
 ## Booting from the Network
 
@@ -142,7 +174,7 @@ Review the file examples/advanced-networking/intel-sriov-node-network.yml file a
 * spec.nicSelector.vendor
 * spec.nicSelector.deviceID
 
-Once you update the yaml, apply this to your cluster. Note that the nodes that have SRIOV cards *will reboot*. When the reboot is complete, re-run the `oc describe SriovNetworkNodeState/sriov0` command and you should now see a list of SRIOV devices.
+Once you update the Yaml, apply this to your cluster. Note that the nodes that have SRIOV cards *will reboot*. When the reboot is complete, re-run the `oc describe SriovNetworkNodeState/sriov0` command and you should now see a list of SRIOV devices.
 
 #### Enabling Unsupported Cards
 

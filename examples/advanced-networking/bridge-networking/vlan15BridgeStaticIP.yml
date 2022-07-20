@@ -1,0 +1,39 @@
+piVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: tuning-bridge-static
+  annotations:
+    k8s.v1.cni.cncf.io/resourceName: bridge.network.kubevirt.io/br1
+spec:
+  config: '{
+   "cniVersion":"0.3.1",
+   "name":"tuning-bridge-static",
+   "plugins":[
+      {
+        "type":"cnv-bridge",
+        "bridge":"br1-trunk",
+        "vlan": 15,
+        "ipam":{
+          "type":"static",
+          "addresses":[
+              {
+                "address":"10.17.3.2/24",
+                "gateway":"10.17.3.1"
+              }
+          ],
+          "dns":{
+              "nameservers":[
+                "10.17.3.1"
+              ],
+              "domain":"xxx",
+              "search":[
+                "xxx"
+              ]
+          }
+        }
+      },
+      {
+         "type":"cnv-tuning"
+      }
+   ]
+}'

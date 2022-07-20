@@ -32,11 +32,11 @@ So you are trying out OpenShift Virtualization, but don't know where to start. H
 
 ## Prerequisites
 
-This README assumes that you already have OpenShift Virtualization installed, and you have storage available to you. Please see [Installing OpenShift Virtualization](https://docs.openshift.com/container-platform/4.6/virt/install/preparing-cluster-for-virt.html) for instructions on how to prepare your cluster and install OpenShift Virtualization.
+This README assumes that you already have OpenShift Virtualization installed, and you have storage available to you. Please see [Installing OpenShift Virtualization](https://docs.openshift.com/container-platform/4.10/virt/install/preparing-cluster-for-virt.html) for instructions on how to prepare your cluster and install OpenShift Virtualization.
 
 You will need the following tools installed on your machine to interact with the OpenShift cluster as well as the OpenShift Virtualization operator.
 * oc - 
-* virtctl - This tool can be downloaded from the [Red Hat Customer Support Portal](https://access.redhat.com/downloads/content/473/ver=2.5/rhel---8/2.5.3/x86_64/product-software)
+* virtctl - This tool can be downloaded from the [Red Hat Customer Support Portal](https://access.redhat.com/downloads/content/473/ver=4.10/rhel---8/4.10.2/x86_64/packages)
 
 You will need to have a cloned copy of this repo to use the example files. The instructions below will assume you have a local copy of the files that you can edit before applying the yaml.
 
@@ -338,34 +338,7 @@ $ virtctl expose virtualmachine win10vm1 --name windows-app-server-rdp --port 33
 
 ## Importing a VM from vSphere
 
-It is possible to import an existing virtual machine from a vSphere cluster. There are a few caveats to be aware of before attempting this import.
-
-1. The vm you wish to import must be powered off. Importing running vms is not supported at this time
-2. You should ensure that the virtual machine you plan to import supports virtio or scsi or sata drivers before importing the vm
-
-The OpenShift vSphere import process requires the use of the VMware Virtual Disk Development Kit (VDDK) to properly import the images. Instructions for how to get this file and make it available to your cluster are located [Importing a single VMware virtual machine or template](https://docs.openshift.com/container-platform/4.6/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.htmlhttps://docs.openshift.com/container-platform/4.6/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html) You must follow the directions on that page before proceeding with the remaining steps in this lab.
-
-To start the import process log into the OpenShift Console UI
-
-1. Log into the OpenShift Console (https://console-openshift-console.apps.\<your cluster dns name\>/)
-2. Select "Workloads" from the left hand side
-3. Select "Virtualization"
-4. Use the "Project Drop down" selector to select the "demovms" project
-5. Select the "Create Virtual Machine" drop down and select "Import with Wizard"
-6. Select "VMware"
-** NOTE:  Ensure you followed the directions above to create the importer image or you will not be able to proceed **
-7. Select "connect to new instance"
-   1. Enter the vcenter host name, a username and password. 
-   2. Click Check and Save
-8. Using the drop down, select a VM or template to import and then click Next
-9. Validate your general settings and click next
-10. Validate your network settings and click next
-11. Validate your storage settings and click next
-12. Set any advanced settings and click next
-13. Review your settings and click import
-14. Select the new VM and watch the import process, and wait for it to complete.
-15. Power from the Actions menu select "Start Virtual Machine"
-16. Select the console and watch your imported VM start.
+It is possible to import an existing virtual machine from a vSphere cluster to OpenShift Virtualization using [Migration Toolkit for Virtualization](https://access.redhat.com/documentation/en-us/migration_toolkit_for_virtualization/2.3). The detailed steps for migration is outlined [here](https://github.com/latouchek/mtv-vsphere).
 
 ## Importing a VMDK
 

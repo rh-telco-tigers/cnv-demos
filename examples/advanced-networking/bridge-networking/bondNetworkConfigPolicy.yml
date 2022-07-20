@@ -1,0 +1,36 @@
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: worker-bond1-br1
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+  desiredState:
+    interfaces:
+      - name: bond1
+        description: Bonding ens224 and ens256 ports
+        type: bond
+        state: up
+        ipv4:
+          enabled: false
+        link-aggregation:
+          mode: active-backup
+          options:
+            miimon: '100'
+          port:
+          - ens224
+          - ens256
+        mtu: 2450
+      - name: br1
+        description: Bridge from bond interface bond1
+        type: linux-bridge
+        state: up
+        ipv4:
+          enabled: false
+        bridge:
+          options:
+            stp:
+              enabled: false
+          port: 
+            - name: bond1
+EOF
