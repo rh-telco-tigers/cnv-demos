@@ -54,7 +54,7 @@ Now the NodeNetworkConfigurationPolicy manifest can be applied on the cluster. E
 $ oc create -f examples/advanced-networking/bridge-networking/bridgeNetworkConfigPolicy.yml
 $ oc get NodeNetworkConfigurationPolicy
 NAME              STATUS
-br1-eth1-policy   SuccessfullyConfigured
+br1-eth1-policy   Available
 ```
 
 We will now create a "NetworkAttachmentDefinition" which is created on a project/namespace level. You must have a NetworkAttachmentDefinition defined in your target namespace before you can use it. We will apply the vlan15Bridge.yml file to the same project we used for the OpenShift Virtualization lab called "demovms". If you want to use a different VLAN be sure to update the file before applying it with your target vlan number.

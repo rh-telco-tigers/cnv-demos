@@ -3,19 +3,12 @@ kind: NetworkAttachmentDefinition
 metadata:
   name: br1-15
   annotations:
-    k8s.v1.cni.cncf.io/resourceName: bridge.network.kubevirt.io/br1
+    k8s.v1.cni.cncf.io/resourceName: bridge.network.kubevirt.io/br1-trunk
 spec:
   config: '{
     "cniVersion": "0.3.1",
-    "name": "cnv-bridge-conf",
-    "plugins": [
-      {
-        "type": "cnv-bridge",
-        "bridge": "br1-trunk",
-        "vlan": 15
-      },
-      {
-        "type": "cnv-tuning"
-      }
-    ]
+    "name": "br1-15",
+    "type": "cnv-bridge",
+    "bridge": "br1-trunk",
+    "vlan": 10
   }'
