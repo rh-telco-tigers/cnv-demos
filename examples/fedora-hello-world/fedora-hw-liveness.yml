@@ -1,16 +1,15 @@
----
-apiVersion: kubevirt.io/v1alpha3
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
 metadata:
   labels:
-    special: vm-fedora-persist
-  name: vm-fedora-persist
-kind: VirtualMachine
+    special: vm-fedora
+  name: vm-fedora
 spec:
   running: false
   template:
     metadata:
       labels:
-        kubevirt.io/vm: vm-fedora-persist
+        special: vm-fedora
     spec:
       networks:
       - name: default
@@ -23,16 +22,13 @@ spec:
           disks:
           - disk:
               bus: virtio
-            name: datavolumedisk1
+            name: datavolumedisk1-dv
           - disk:
               bus: virtio
             name: cloudinitdisk
-          rng: {}
-        machine:
-          type: ""
         resources:
           requests:
-            memory: 2048M 
+            memory: 1024M
       livenessProbe:
         initialDelaySeconds: 150
         periodSeconds: 20
@@ -40,31 +36,29 @@ spec:
           port: 1500
         timeoutSeconds: 10
       readinessProbe:
-        initialDelaySeconds: 120
-        periodSeconds: 5
         httpGet:
           port: 1500
-        timeoutSeconds: 3
-      terminationGracePeriodSeconds: 0
+        initialDelaySeconds: 120
+        periodSeconds: 20
+        timeoutSeconds: 10
+        failureThreshold: 3
+        successThreshold: 3
+      terminationGracePeriodSeconds: 180
       volumes:
-        - dataVolume:
-            name: datavolumedisk1-dv
-          name: datavolumedisk1
-        - cloudInitNoCloud:
-            userData: |-
+      - dataVolume:
+          name: datavolumedisk1-dv
+        name: datavolumedisk1-dv
+      - cloudInitNoCloud:
+          userData: |-
             #cloud-config
             password: fedora
             chpasswd: { expire: False }
-            ssh_pwauth: True
-            disable_root: false
-            ssh_authorized_keys:
-                - ssh-rsa  AAAAB3Nz...0bLEgbgyYQ==
             bootcmd:
               - setenforce 0
               - dnf install -y nmap-ncat
               - sh -c "/usr/bin/echo -e HTTP/1.1 200 OK\\\n\\\nHello World! from $(hostname) > /etc/helloworld"
               - systemd-run --unit=httpserver nc -klp 1500 -e '/usr/bin/cat /etc/helloworld'
-          name: cloudinitdisk
+        name: cloudinitdisk
   dataVolumeTemplates:
     - metadata:
         name: datavolumedisk1-dv

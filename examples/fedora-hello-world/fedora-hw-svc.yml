@@ -8,4 +8,4 @@ spec:
     protocol: TCP
     targetPort: 1500
   selector:
-    kubevirt.io/vm: vm-fedora-hw
+    special: vm-fedora
